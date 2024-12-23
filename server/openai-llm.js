@@ -1,17 +1,21 @@
 import { response } from "express";
 import OpenAI from "openai";
 
+import { loadResume } from "./db/db-set-up.js";
+
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-const generateChat = async ({ jobTitle, jobDescription }) => {
-  const systemPrompt = `You are an assistant the generates cover letters. Write a cover letter for any provided job title and job description. Only return the body of the letter. Format the letter to match the output format.
-
+const generateChat = async ({ jobTitle, jobDescription, fileId }) => {
+  const referenceDocument = await loadResume(fileId);
+  const systemPrompt = `You are an assistant that generates cover letters.`;
+  const userPrompt = ` Use the provided job title, description, and template resume to construct your cover letters.
 Job description:
-[Provided Job Description]
+${jobDescription}
+Job title:
+${jobTitle}
+Reference Resume:
+${referenceDocument}
 
-Output format:
-Document Title: [Title]
-Paragraph text...
 
 `;
 
@@ -24,12 +28,23 @@ Paragraph text...
       },
       {
         role: "user",
-        content: `Write a cover letter for a position titled ${jobTitle}. The job description is ${jobDescription}`,
+        content: userPrompt,
       },
     ],
   });
 
   return completion.choices[0].message;
+};
+
+// TODO: Figure out upload file workflow
+/*
+1) User selects file and clicks upload
+2) File is uploaded to OpenAI and saved as a vector store (VECTOR STORE ID)
+3) Thread is destroyed after each run? OR after a session
+*/
+
+export const uploadFile = () => {
+  // const url =
 };
 
 export default generateChat;

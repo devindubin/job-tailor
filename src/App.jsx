@@ -1,8 +1,11 @@
+/* global chrome */
+
 import JobDescriptionPreview from "./components/JobDescriptionPreview";
 import Button from "./components/Button";
 import Output from "./components/Output";
 import Header from "./components/Header";
 import Window from "./components/Window";
+import FileUpload from "./components/FileUpload";
 import { useState, createContext } from "react";
 
 // Context
@@ -13,25 +16,26 @@ export const JobContext = createContext("");
 Header needs a logo
 maybe a reference to the file name of the reference resume
 */
-//TODO: Call AI
-/*
-Extenion will need to interact with a seperate server to communicate with LLM API to protect keys
-*/
-
-//TODO: Generate letter button
 
 function App() {
   // States
   const [jobDescription, setJobDescription] = useState("JD Placeholder");
   const [jobTitle, setJobTitle] = useState("");
-
+  const [file, setFile] = useState();
+  const [uploadedFile, setUploadedFile] = useState();
+  const [fileError, setFileError] = useState();
+  //state for finished cover letter before it can be downloaded
+  const [bufferForDownload, setBufferForDownload] = useState();
+  const [downloadDisabled, setDownloadDisabled] = useState(true);
   // Button Functions
   const parseJobData = async () => {
     const descriptionLength = 100;
     try {
+      //TODO: Handle possible error
       const { parsedJobDescription, parsedJobTitle, error } =
         await chrome.runtime.sendMessage({
           action: "parse-job-description",
+          target: "content",
         });
 
       if (parsedJobDescription.length > descriptionLength) {
@@ -51,38 +55,78 @@ function App() {
     }
   };
 
+  const generateDocument = async () => {
+    const url = "http://localhost:5000/chat";
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        body: {
+          jobTitle: jobTitle,
+          jobDescription: jobDescription,
+          fileId: uploadedFile,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      const blob = await response.blob();
+      setBufferForDownload(blob);
+      setDownloadDisabled(false);
+    } catch (error) {
+      console.error(error.message);
+    }
+  };
+
+  const downloadLetter = () => {
+    const url = window.URL.createObjectURL(bufferForDownload);
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", "placeholder.docx");
+
+    document.body.appendChild(link);
+    link.click();
+    link.parentNode.removeChild(link);
+    setDownloadDisabled(true);
+  };
+
   const testOnClick = (content) => {
     console.log(content);
     parseJobData();
   };
 
-  const testScrapeJobDescription = () => {
-    const data = document.querySelector("#header").textContent;
-    setJobDescription(data);
-  };
-
-  //LLM Function
-  const processDescription = () => {
-    //send description and title to the llm
-    // provide download link to response?
-  };
+  const isdisabled = downloadDisabled ? true : false;
 
   return (
     <div className="App">
-      <JobContext.Provider value={{ jobDescription, jobTitle, parseJobData }}>
+      <JobContext.Provider
+        value={{
+          jobDescription,
+          jobTitle,
+          parseJobData,
+          file,
+          setFile,
+          uploadedFile,
+          setUploadedFile,
+          fileError,
+          setFileError,
+        }}
+      >
         <Window>
           <Header />
           <JobDescriptionPreview />{" "}
           {/* Job description  preview should show the first and last 25 characters of the jd just to confirm it is reading the right content*/}
-          <Button onClick={parseJobData} content="Access main doc" />{" "}
+          <Button onClick={parseJobData} content="Parse Job Details" />{" "}
           {/* Locate description button */}
-          <Button
-            onClick={testScrapeJobDescription}
-            content="Access app doc"
-          />{" "}
+          <Button onClick={generateDocument} content="Generate Document" />{" "}
           {/* generate cover letter */}
-          <Button onClick={testOnClick} content="Download Letter" />{" "}
+          <Button
+            disabled={isdisabled}
+            onClick={downloadLetter}
+            content="Download Letter"
+          ></Button>
           {/* Listen for cover letter creation and link  when completed */}
+          <FileUpload />
         </Window>
       </JobContext.Provider>
     </div>

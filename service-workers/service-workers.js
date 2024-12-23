@@ -46,41 +46,32 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     "Message Received at Service Worker File",
     JSON.stringify(request)
   );
-  chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-    console.log("Within Chrome Tabs Context");
-    console.log(tabs);
-    console.log(request);
-    chrome.tabs.sendMessage(tabs[0].id, request, (response) => {
-      if (chrome.runtime.lastError) {
-        console.log("Error: ", chrome.runtime.lastError);
-        sendResponse({ error: chrome.runtime.lastError });
-      } else {
-        console.log(
-          "The content script got the following message: " +
-            JSON.stringify(response)
-        );
-        sendResponse(response);
-      }
-      return true;
-    });
-  });
+  switch (request.target) {
+    case "content":
+      chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+        console.log("Within Chrome Tabs Context");
+        console.log(tabs);
+        console.log(request);
+        chrome.tabs.sendMessage(tabs[0].id, request, (response) => {
+          if (chrome.runtime.lastError) {
+            console.log("Error: ", chrome.runtime.lastError);
+            sendResponse({ error: chrome.runtime.lastError });
+          } else {
+            console.log(
+              "The content script got the following message: " +
+                JSON.stringify(response)
+            );
+            sendResponse(response);
+          }
+          return true;
+        });
+      });
 
-  // if (request.action === "parse-job-description") {
-  //   const parsedJobTitle = document.querySelector(
-  //     'div[class$="__job-title"] a'
-  //   ).textContent;
-  //   const parsedJobDescription = document.querySelector(
-  //     ".job-details-module"
-  //   ).textContent;
-  //   if (!parsedJobDescription || !parsedJobTitle) {
-  //     error = "Either job description or job title not found.";
-  //   }
+    case "service":
+      pass;
+    default:
+      console.error("Message Missing Target Value");
+  }
 
-  //   console.log("JD: ", parsedJobDescription);
-  //   console.log("JT: ", parsedJobTitle);
-  //   console.log("Error:", error);
-
-  //   sendResponse({ parsedJobDescription, parsedJobTitle, error });
-  // }
   return true;
 });

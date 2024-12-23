@@ -1,10 +1,11 @@
 import React from "react";
 
-const Button = (props) => {
+const Button = ({ children, content, onClick, ...style }) => {
   return (
     <div className="action-buttons">
-      <button onClick={() => props.onClick(props.content)}>
-        {props.content}
+      <button {...style} onClick={() => onClick(content)}>
+        {content}
+        {children}
       </button>
     </div>
   );
