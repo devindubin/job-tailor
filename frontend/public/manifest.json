@@ -1,0 +1,23 @@
+{
+  "manifest_version": 3,
+  "name": "React Chrome Extension",
+  "version": "1.0.0",
+  "description": "A simple React app as a Chrome extension",
+  "action": {
+    "default_title": "Click to activate"
+  },
+  "side_panel": {
+    "default_path": "index.html"
+  },
+  "background": {
+    "service_worker": "serviceWorker.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://www.linkedin.com/*"],
+      "js": ["contentScript.js"]
+    }
+  ],
+  "host_permissions": ["https://www.linkedin.com/*"],
+  "permissions": ["sidePanel", "activeTab", "tabs", "scripting"]
+}
