@@ -1,9 +1,9 @@
 import "dotenv/config";
 import express from "express";
-import generateChat from "./openai-llm.js";
-import { formatAndSaveResponse, extractText } from "./docx.js";
-import { User, Resume } from "./db/db-set-up.js";
-import dbConnect from "./db/db-core.js";
+import generateChat from "../server/openai-llm.js";
+import { formatAndSaveResponse, extractText } from "../server/docx.js";
+import { User, Resume } from "../server/db/db-set-up.js";
+import dbConnect from "../server/db/db-core.js";
 import cors from "cors";
 import multer from "multer";
 import logger from "../logger.js";
