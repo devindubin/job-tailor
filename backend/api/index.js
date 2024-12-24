@@ -110,8 +110,8 @@ app.get("/resumes", async (req, res) => {
   res.send(resumes);
 });
 
-const server = app.listen(port, () => {
+app.listen(port, () => {
   console.log(`Example app listening on http://localhost:${port}`);
 });
 
-export default server;
+export default app;
