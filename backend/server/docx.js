@@ -6,7 +6,7 @@ import mammoth from "mammoth";
 export const formatAndSaveResponse = async (response) => {
   const content = response.content;
   const childArray = [];
-
+  console.log(content);
   const lines = content.split("\n");
   lines.map((line) => {
     childArray.push(new Paragraph({ children: [new TextRun(line.trim())] }));
