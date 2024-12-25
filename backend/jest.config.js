@@ -8,5 +8,7 @@ export default {
   collectCoverage: true,
   coverageDirectory: "<rootDir>/backend/coverage",
   coverageReporters: ["text", "lcov"],
-  transform: {},
+  transform: {
+    "^.+\\.(js|jsx|ts|tsx)$": "babel-jest",
+  },
 };

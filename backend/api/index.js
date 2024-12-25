@@ -6,16 +6,16 @@ import { User, Resume } from "../server/db/db-set-up.js";
 import dbConnect from "../server/db/db-core.js";
 import cors from "cors";
 import multer from "multer";
-import logger from "../logger.js";
+// import logger from "../logger.js";
 
 const app = express();
 const port = 3000;
 
 try {
   await dbConnect();
-  logger.info("Connected to database");
+  console.info("Connected to database");
 } catch (e) {
-  logger.error("Database connection failed", e);
+  console.error("Database connection failed", e);
   process.exit(1);
 }
 
@@ -25,11 +25,11 @@ app.use(express.json());
 
 app.use(express.urlencoded({ extended: true }));
 
-app.use((req, res, next) => {
-  req.time = new Date(Date.now()).toString();
-  logger.log(req.method, req.hostname, req.path, req.time);
-  next();
-});
+// app.use((req, res, next) => {
+//   req.time = new Date(Date.now()).toString();
+//   console.log(req.method, req.hostname, req.path, req.time);
+//   next();
+// });
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
@@ -75,7 +75,7 @@ app.post("/chat", async (req, res) => {
 
     res.status(200).end(buffer);
   } catch (error) {
-    logger.error("Error processing chat request:", error);
+    console.error("Error processing chat request:", error);
   }
 });
 
