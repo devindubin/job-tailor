@@ -43,6 +43,7 @@ app.post("/chat", async (req, res) => {
   let jobTitle;
   let jobDescription;
   let fileId;
+  console.log(req.body);
   if (req.body.jobTitle && req.body.jobDescription) {
     jobTitle = req.body.jobTitle;
     jobDescription = req.body.jobDescription;
