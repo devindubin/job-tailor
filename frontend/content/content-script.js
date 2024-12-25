@@ -4,7 +4,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   console.log("Message Received at Content Script", request);
   if (request.action === "parse-job-description") {
     const parsedJobTitle = document
-      .querySelector("#ember52")
+      .querySelector('[class$="__job-title"]')
       .textContent.trimStart()
       .trimEnd();
     const parsedJobDescription = document

@@ -56,7 +56,7 @@ function App() {
   };
 
   const generateDocument = async () => {
-    const url = "http://localhost:5000/chat";
+    const url = "https://job-tailor.vercel.app/chat";
     try {
       const response = await fetch(url, {
         method: "POST",

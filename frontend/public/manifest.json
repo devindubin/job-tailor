@@ -18,6 +18,9 @@
       "js": ["contentScript.js"]
     }
   ],
-  "host_permissions": ["https://www.linkedin.com/*"],
+  "host_permissions": [
+    "https://www.linkedin.com/*",
+    "https://wwww.job-tailor.vercel.app/*"
+  ],
   "permissions": ["sidePanel", "activeTab", "tabs", "scripting"]
 }

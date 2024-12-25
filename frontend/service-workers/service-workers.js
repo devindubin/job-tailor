@@ -68,7 +68,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       });
 
     case "service":
-      pass;
+      return true;
     default:
       console.error("Message Missing Target Value");
   }
