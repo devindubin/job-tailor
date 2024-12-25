@@ -25,11 +25,11 @@ app.use(express.json());
 
 app.use(express.urlencoded({ extended: true }));
 
-// app.use((req, res, next) => {
-//   req.time = new Date(Date.now()).toString();
-//   console.log(req.method, req.hostname, req.path, req.time);
-//   next();
-// });
+app.use((req, res, next) => {
+  req.time = new Date(Date.now()).toString();
+  console.log(req.method, req.hostname, req.path, req.time);
+  next();
+});
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
@@ -55,6 +55,9 @@ app.post("/chat", async (req, res) => {
   } else {
     fileId = undefined; //TODO: this is nonsense
   }
+
+  console.log("Job Title:", jobTitle);
+  console.log("Job Description:", jobDescription);
 
   try {
     const chatResults = await generateChat({
